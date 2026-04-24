@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Duke — Heads-Up Poker</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="title">
+          DUKE
+          <span class="stakes">$1 / $2 · NO LIMIT</span>
+        </div>
+        <div class="handinfo">
+          <span id="hand-number">Hand —</span>
+          <span id="street-label">—</span>
+        </div>
+        <div class="voice-controls">
+          <button id="btn-history" class="btn btn-ghost">History</button>
+          <button id="btn-connect" class="btn btn-ghost">Connect voice</button>
+          <span id="voice-status" class="status">offline</span>
+        </div>
+      </header>
+
+      <aside id="history-panel" class="history-panel closed">
+        <div class="history-header">
+          <span class="history-title">Hand History</span>
+          <div class="history-actions">
+            <button id="btn-clear-history" class="preset">Clear</button>
+            <button id="btn-close-history" class="preset">×</button>
+          </div>
+        </div>
+        <div id="history-list" class="history-list">
+          <div class="history-empty">No hands played yet.</div>
+        </div>
+      </aside>
+
+      <main class="table-area">
+        <section class="seat seat-duke" id="seat-duke">
+          <div class="seat-name">Duke</div>
+          <div class="seat-stack" id="duke-stack">$200</div>
+          <div class="seat-bet" id="duke-bet"></div>
+          <div class="seat-cards" id="duke-cards"></div>
+          <div class="seat-badge" id="duke-badge"></div>
+        </section>
+
+        <section class="board-area">
+          <div class="pot" id="pot">$0</div>
+          <div class="board" id="board"></div>
+          <div id="hand-result" class="hand-result hidden"></div>
+          <div class="last-action" id="last-action"></div>
+        </section>
+
+        <section class="seat seat-hero" id="seat-hero">
+          <div class="seat-cards" id="hero-cards"></div>
+          <div class="seat-bet" id="hero-bet"></div>
+          <div class="seat-stack" id="hero-stack">$200</div>
+          <div class="seat-name">You</div>
+          <div class="seat-badge" id="hero-badge"></div>
+        </section>
+      </main>
+
+      <footer class="controls">
+        <div id="controls-row" class="controls-row"></div>
+        <div id="post-hand" class="post-hand hidden">
+          <button id="btn-next" class="btn btn-primary">Continue</button>
+        </div>
+      </footer>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
