@@ -12,6 +12,7 @@ import type { Action, GameState, Street } from './poker/types';
 import { makePublicView } from './strategy/publicView';
 import { decide } from './strategy/strategy';
 import { recordHand } from './game/history';
+import { preflopStrength } from './strategy/handStrength';
 import { getRead, recordHandEvent } from './strategy/opponentTracker';
 import { renderControls } from './ui/controls';
 import { initHistoryUI } from './ui/history';
@@ -65,6 +66,14 @@ function onHeroAction(action: Action) {
   render();
 }
 
+function strengthTier(strength: number): string {
+  if (strength >= 85) return 'MONSTER';
+  if (strength >= 65) return 'STRONG';
+  if (strength >= 45) return 'MEDIUM';
+  if (strength >= 25) return 'WEAK';
+  return 'TRASH';
+}
+
 function dukeTurn() {
   if (state.toAct !== 1 || isHandOver(state)) return;
   const view = makePublicView(state, 1);
@@ -72,7 +81,7 @@ function dukeTurn() {
   const { action, intent, strength } = decide(view, legal);
 
   const street = state.street.toUpperCase();
-  const holeTxt = cardsToString(state.players[1].holeCards!);
+  const tier = strengthTier(strength);
   const boardTxt = state.board.length ? cardsToString(state.board) : 'none';
   const toCall = state.currentBet - state.players[1].streetContribution;
 
@@ -89,10 +98,10 @@ function dukeTurn() {
   }
 
   sendGameEvent(
-    `[GAME] ${street}. Your cards: ${holeTxt}. Board: ${boardTxt}. Pot $${state.pot + sumStreet()}. ` +
+    `[GAME] ${street}. Board: ${boardTxt}. Pot $${state.pot + sumStreet()}. ` +
       `To call: $${toCall}. Your stack: $${state.players[1].stack}. ` +
-      `Intent: ${intent}. Strength ${Math.round(strength)}/100. ` +
-      `About to ${describeAction(action)}.${readLine}`
+      `Your hand strength: ${tier} (${Math.round(strength)}/100). ` +
+      `Intent: ${intent}. About to ${describeAction(action)}.${readLine}`
   );
 
   const streetBefore = state.street;
@@ -135,10 +144,12 @@ function sumStreet(): number {
 }
 
 function announceHandStart() {
-  const dukeHole = cardsToString(state.players[1].holeCards!);
   const myPosition = state.button === 1 ? 'SB/button' : 'BB';
+  const s = preflopStrength(state.players[1].holeCards!);
+  const tier = strengthTier(s);
   sendGameEvent(
-    `[GAME] --- New Hand ${state.handNumber} --- You are ${myPosition}. Your cards: ${dukeHole}. ` +
+    `[GAME] --- New Hand ${state.handNumber} --- You are ${myPosition}. ` +
+      `Preflop hand strength: ${tier}. ` +
       `Stacks: you $${state.players[1].stack}, opponent $${state.players[0].stack}. Blinds $${state.blinds.smallBlind}/$${state.blinds.bigBlind}.`
   );
 }
